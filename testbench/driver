@@ -1,0 +1,28 @@
+//Driver
+class alu_driver extends uvm_driver #(alu_txn);
+  `uvm_component_utils(alu_driver)
+  virtual alu_if vif;
+  
+  function new(string name, uvm_component parent);
+    super.new(name, parent);
+  endfunction
+  
+  function void build_phase(uvm_phase phase);
+    if (!uvm_config_db#(virtual alu_if)::get(this,"","vif",vif))
+      `uvm_fatal("DRV","No vif")
+  endfunction
+      
+  task run_phase(uvm_phase phase);
+    alu_txn txn;
+    forever begin
+      seq_item_port.get_next_item(txn);
+      @(posedge vif.clk);
+      vif.a = txn.a;
+      vif.b = txn.b;
+      vif.op = txn.op;
+      #1;
+      seq_item_port.item_done();
+    end
+  endtask
+endclass
+    
