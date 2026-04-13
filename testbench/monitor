@@ -1,0 +1,34 @@
+class alu_monitor extends uvm_monitor;
+  `uvm_component_utils(alu_monitor)
+  
+  virtual alu_if vif;
+  uvm_analysis_port #(alu_txn) ap;
+  
+  function new(string name, uvm_component parent);
+    super.new(name, parent);
+    ap = new("ap",this);
+  endfunction
+  
+  function void build_phase(uvm_phase phase);
+    if(!uvm_config_db#(virtual alu_if)::get(this,"","vif",vif))
+      `uvm_fatal("MON", "No vif")
+  endfunction
+      
+  task run_phase(uvm_phase phase);
+    alu_txn txn;
+    
+    forever begin
+      @(negedge vif.clk);
+      #1;
+      txn = alu_txn::type_id::create("txn");
+      #1;
+      txn.a = vif.a;
+      txn.b = vif.b;
+      txn.op = vif.op;
+      txn.result = vif.result;
+      txn.carry = vif.carry;
+      
+      ap.write(txn);
+    end
+  endtask
+endclass
