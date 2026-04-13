@@ -1,0 +1,23 @@
+class alu_coverage extends uvm_component;
+  `uvm_component_utils(alu_coverage)
+  uvm_analysis_imp #(alu_txn, alu_coverage) imp;
+  alu_txn txn;
+  
+  covergroup cg;
+    cp_op : coverpoint txn.op;
+    cp_a  : coverpoint txn.a;
+    cp_b  : coverpoint txn.b;
+    cross cp_op, cp_a, cp_b;
+  endgroup
+  
+  function new(string name, uvm_component parent);
+    super.new(name, parent);
+    imp = new("imp", this);
+    cg = new();
+  endfunction
+  
+  function void write(alu_txn t);
+    txn=t;
+    cg.sample();
+  endfunction
+endclass
