@@ -1,0 +1,31 @@
+
+import uvm_pkg::*;
+`include "uvm_macros.svh"
+
+//Interface+Assertion
+interface alu_if;
+  logic clk;
+  logic [3:0]a,b;
+  logic [2:0]op;
+  logic [3:0]result;
+  logic carry;
+  
+  property add_check;
+    @(posedge clk)
+    (op==3'b000) |-> ({carry,result}==a+b);
+  endproperty
+  assert property(add_check);
+    
+  property sub_check;
+    @(posedge clk)
+    (op==3'b001) |-> ({carry,result}==a-b);
+  endproperty
+  assert property(sub_check);
+      
+  property and_check;
+    @(posedge clk)
+    (op==3'b010) |-> (result==(a&b));
+  endproperty
+  assert property(and_check);
+    
+endinterface
