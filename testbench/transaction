@@ -1,0 +1,16 @@
+//Transaction
+class alu_txn extends uvm_sequence_item;
+  rand bit [3:0]a,b;
+  rand bit [2:0]op;
+  
+  bit [3:0]result;
+  bit carry;
+  
+  constraint op_valid {op inside {[0:7]}; }
+  `uvm_object_utils(alu_txn)
+  
+  function new(string name="alu_txn");
+    super.new(name);
+  endfunction
+  
+endclass
